@@ -8,6 +8,7 @@ safe_remote_ops/
 │   └── logger.py
 │   └── operations.py
 │   └── validator.py
+│   └── core_html_report.py
 ├── platform/
 │   └── base.py
 │   └── unix_local.py
