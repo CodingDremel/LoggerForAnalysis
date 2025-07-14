@@ -47,12 +47,21 @@ class SafeLogger:
         ))
         file_handler.setLevel(self.log_level)
 
+        self.memory_log_stream = io.StringIO()
+        self.memory_handler = logging.StreamHandler(self.memory_log_stream)
+        self.memory_handler.setFormatter(formatter)
+        
         self.logger = logging.getLogger(self.name)
         self.logger.setLevel(self.log_level)
         self.logger.addHandler(console_handler)
         self.logger.addHandler(file_handler)
+        self.logger.addHandler(self.memory_handler)
+        
         self.logger.propagate = False
 
+    def get_captured_logs(self):
+        return self.memory_log_stream.getvalue()
+    
     def start_log_listener(self):
         self._log_thread = threading.Thread(target=self._log_listener, daemon=True)
         self._log_thread.start()
