@@ -56,6 +56,8 @@ def main():
                              "case-insensitive: ALL, SAFE, CRITICAL")
     parser.add_argument("--search-for-apps", action="store_true",
                         help="Search for applications if they are not defined as absolute paths in config")
+    parser.add_argument("--html", action="store_true",
+                        help="Generate HTML file about current run")
 
     args = parser.parse_args()
 
