@@ -2,7 +2,7 @@
 # Unit tests for core logic and utilities
 
 import unittest
-from safe_remote_ops.utils import integrity, path_utils
+from utils import integrity, path_utils
 
 class TestIntegrityUtils(unittest.TestCase):
     def test_md5_and_crc32(self):

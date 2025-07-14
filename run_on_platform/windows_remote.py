@@ -1,11 +1,11 @@
 
-import winrm
+import pywinrm
 import os
 from typing import List, Tuple
 
 class RemoteWindowsOperator:
     def __init__(self, ip: str, username: str, password: str):
-        self.session = winrm.Session(ip, auth=(username, password))
+        self.session = pywinrm.Session(ip, auth=(username, password))
 
     def run_cmd(self, command: str) -> Tuple[int, str, str]:
         try:

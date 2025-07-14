@@ -4,6 +4,7 @@ import multiprocessing
 import threading
 import queue
 import colorlog
+import io
 
 class FlushSignal:
     pass

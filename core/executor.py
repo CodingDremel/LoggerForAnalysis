@@ -1,3 +1,14 @@
+import logging
+import time
+import json
+
+from typing import Dict, Any, List
+
+from core.logger import ProcessLogger
+from core.operations import SafeRemoteOperations
+from run_on_platform.base import OperationResult
+from utils.file_ops import atomic_file_operation
+
 def run_operation_safely(operation: str, computer: Dict[str, Any], config: Dict[str, Any],
                          kill_mode: str = "SAFE", start_mode: str = "CRITICAL",
                          search_for_apps: bool = True, log_queue=None, log_level=logging.DEBUG,
@@ -299,3 +310,15 @@ def main():
 
 
 if __name__ == "__main__":
+    exit(main())
+
+# USAGE EXAMPLES:
+
+# Run restart on all computers:
+# python safe_remote_ops_v2.py restart_application
+
+# Run with simulation mode:
+# python safe_remote_ops_v2.py restart_application --simulation
+
+# Run with custom config:
+# python safe_remote_ops_v2.py restart_application --config Config_01.json

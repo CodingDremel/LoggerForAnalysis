@@ -1,3 +1,36 @@
+# General imports
+import os
+import json
+import hashlib
+import zlib
+import logging
+import logging.handlers
+import colorlog
+import argparse
+import multiprocessing
+import threading
+import time
+import shutil
+import fcntl
+import tempfile
+import queue
+import subprocess
+import psutil
+import copy
+import re
+
+# Concrete imports
+from pathlib import Path
+from contextlib import contextmanager
+from dataclasses import dataclass
+from typing import List, Dict, Any, Optional
+from concurrent.futures import ProcessPoolExecutor, as_completed
+
+# Local imports
+from core.logger import SafeLogger
+from config.parser import load_default_config
+from run_on_platform.base import OperationResult
+
 class SafeRemoteOperations:
     """Safe version of remote operations with proper atomicity and logging"""
 
@@ -123,7 +156,7 @@ class SafeRemoteOperations:
     def _is_safe_to_kill(self, app: str) -> bool:
         """Check if application is safe to kill"""
         app_name = self._extract_app_name(app)
-        # In case you want to change logic to allow persistant apps - uncomment 2 lines below
+        # In case you want to change logic to allow persistent apps - uncomment 2 lines below
         # return not any(critical_app.lower() in app_name.lower() or app_name.lower() in critical_app.lower()
         #                for critical_app in self.critical_apps)
         return True

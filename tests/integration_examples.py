@@ -1,9 +1,9 @@
 # integration_examples.py
 # Demonstrates end-to-end usage of the system
 
-from safe_remote_ops.config.parser import ConfigParser
-from safe_remote_ops.core.logger import SafeLogger
-from safe_remote_ops.core.operations import SafeRemoteOperations
+from config.parser import ConfigParser
+from core.logger import SafeLogger
+from core.operations import SafeRemoteOperations
 
 def run_demo():
     config_path = "safe_remote_ops/data/config.json"
