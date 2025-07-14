@@ -1,3 +1,5 @@
+from core.html_report import generate_html_report
+
 def main():
     parser = argparse.ArgumentParser(
         description="Safe Remote Operations Script",
@@ -149,6 +151,17 @@ def main():
         safe_logger.logger.info(
             f"Summary: {report['summary']['total_successes']} successes, "
             f"{report['summary']['total_failures']} failures")
+        if args.html:
+            # log_folder: path where logs/results are saved
+            # report_path: path to operation_report.json
+            # log_capture: contents of your log buffer
+    
+            output_html = generate_html_report(
+                log_folder=config.get("destination", "logs"),
+                report_path=args.report,
+                log_capture=log_capture_buffer.getvalue().splitlines() # or your log list
+            )
+            print(f"HTML summary created at {output_html}")
         # Stop logger before exiting
         safe_logger.stop_log_listener()
         return 0
