@@ -159,11 +159,12 @@ def main():
             # log_capture: contents of your log buffer
     
             output_html = generate_html_report(
+                # TODO: Change to correct folder name - just read is not enough
                 log_folder=config.get("destination", "logs"),
                 report_path=args.report,
                 log_capture=log_capture_buffer.getvalue().splitlines() # or your log list
             )
-            print(f"HTML summary created at {output_html}")
+            safe_logger.logger.info(f"HTML summary created at {output_html}")
         # Stop logger before exiting
         safe_logger.stop_log_listener()
         return 0
