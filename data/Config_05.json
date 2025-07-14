@@ -1,0 +1,142 @@
+{
+    "computers": {
+        "Local_01": {
+            "ip": "127.0.0.1",
+            "user_name": "MY_USER_NAME",
+            "password": "<MY_PASSWORD>",
+            "destination_path": "\\Local_01",
+            "name": "LocalLCS_01",
+            "exe_path": "C:\\PATH_TO_ROOT_DIR_TO_SEARCH_FOR_EXECUTABLES\\",
+            "save_session_path": "C:\\Logs\\.*",
+            "save_process_list_path": "C:\\Logs\\.*",
+            "kill_all_path": "ABS_PATH_TO_APP_KILLING_ALL_EXEC",
+            "log_src_path": "ABS_PATH_TO_READ_LOG_FILES_FROM_THIS_COMPUTER",
+            "apps": [
+                "FILENAME_S_OF_EXE_TO_LAUNCH"
+            ],
+            "critical_apps": [
+                "app_01.exe",
+                "app_02.exe",
+                "app_03.exe"
+            ],
+            "safe_apps": [
+                "app_05.exe",
+                "app_06.exe",
+                "app_07.exe",
+                "app_08.exe",
+                "app_09.exe"
+            ],
+            "applications_to_start": [
+                "app_10.exe",
+                "app_11.exe",
+                "app_04.exe"
+            ],
+            "common_app_order": {
+                "app_01.exe": [
+                    "app_06.exe",
+                    "app_07.exe"
+                ],
+                "app_02.exe": [
+                    "app_05.exe"
+                ],
+                "app_03.exe": [
+                    "app_08.exe"
+                ]
+            },
+            "file_to_delete": [
+                "LIST_OF_ABS_PATHS_TO_FILE_TO_DELETE_ON_EACH_DELETE_FILE_CALL"
+            ],
+            "files_path": [
+                "LIST_OF_ABS_PATHS_TO_DIRS_TO_SEARCH_LOG_FILES_IN"
+            ]
+        },
+        "Remote_01": {
+            "ip": "192.227.40.200",
+            "user_name": "REMOTE_USER_NAME",
+            "password": "<MY_PASSWORD>",
+            "destination_path": "\\Local_01",
+            "name": "RemoteLCD_01",
+            "exe_path": "C:\\PATH_TO_ROOT_DIR_TO_SEARCH_FOR_EXECUTABLES\\",
+            "save_session_path": "C:\\Logs\\.*",
+            "save_process_list_path": "C:\\Logs\\.*",
+            "kill_all_path": "ABS_PATH_TO_APP_KILLING_ALL_EXEC",
+            "log_src_path": "ABS_PATH_TO_READ_LOG_FILES_FROM_THIS_COMPUTER",
+            "apps": [
+                "FILENAME_S_OF_EXE_TO_LAUNCH"
+            ],
+            "critical_apps": [
+                "app_31.exe",
+                "app_32.exe",
+                "app_53.exe"
+            ],
+            "safe_apps": [
+                "app_105.exe",
+                "app_216.exe",
+                "app_117.exe",
+                "app_408.exe",
+                "app_209.exe"
+            ],
+            "applications_to_start": [
+                "app_50.exe",
+                "app_21.exe",
+                "app_24.exe"
+            ],
+            "common_app_order": {
+                "app_31.exe": [
+                    "app_105.exe",
+                    "app_209.exe"
+                ],
+                "app_32.exe": [
+                    "app_216.exe"
+                ],
+                "app_53.exe": [
+                    "app_408.exe"
+                ]
+            },
+            "file_to_delete": [
+                "LIST_OF_ABS_PATHS_TO_FILE_TO_DELETE_ON_EACH_DELETE_FILE_CALL"
+            ],
+            "files_path": [
+                "LIST_OF_ABS_PATHS_TO_DIRS_TO_SEARCH_LOG_FILES_IN"
+            ]
+        }
+    },
+    "Computer_names_delete": [
+        "RemoteLCD_01",
+        "LocalLCS_01"
+    ],
+    "Computer_names_copy": [
+        "RemoteLCD_01",
+        "LocalLCS_01"
+    ],
+    "Computer_names_kill": [
+        "RemoteLCD_01",
+        "LocalLCS_01"
+    ],
+    "Computer_names_start": [
+        "LocalLCS_01",
+        "RemoteLCD_01"
+    ],
+    "file_extensions": [
+        ".txt",
+        ".log",
+        ".ini",
+        ".sum",
+        ".\\d+",
+        ".tmp"
+    ],
+    "lcs_restart_delay": 5,
+    "pings_to_run": 12,
+    "remote_drive_connection_attempts": 3,
+    "remote_copy_attempts": 4,
+    "thread_delay": 0.5,
+    "execution_attempts": 3,
+    "delete_attempts": 2,
+    "kill_attempts": 4,
+    "verification_attempt_delay": 30,
+    "remote_01_restart_delay": 3,
+    "all_logs_save": "D:\\Logs\\Full_logs_path",
+    "exe_path_01": "C:\\Program Files\\Exe_01_path\\exe_01.exe",
+    "exe_path_02": "D:\\Storage\\Exe_02_path\\exe_02.exe",
+    "automation_run_logs": "..\\src_code\\automation_result_logs"
+}
