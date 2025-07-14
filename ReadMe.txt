@@ -1,19 +1,32 @@
 safe_remote_ops/
 ├── __main__.py                  # Entry point
+├── ReadMe.txt
 ├── config/
-│   └── __init__.py
+│   └── parser.py
 ├── core/
-│   └── __init__.py
+│   └── executor.py
+│   └── logger.py
+│   └── operations.py
+│   └── validator.py
 ├── platform/
-│   └── __init__.py
+│   └── base.py
+│   └── unix_local.py
+│   └── unix_remote.py
+│   └── windows_local.py
+│   └── windows_remote.py
 ├── utils/
-│   └── __init__.py
+│   └── file_ops.py
+│   └── integrity.py
+│   └── path_utils.py
 ├── data/
-│   └── README.md                # Placeholder for config files
+│   └── Config_05.json           # Placeholder for config files
 ├── reports/
 │   └── README.md                # Placeholder for generated reports
 └── tests/
-    └── __init__.py
+    └── Readme.txt
+    └── integration_examples.py
+    └── test_modules.py
+    └── unit_tests.py
 
 # Run test samples
 python -m safe_remote_ops --test     # Run module import tests
