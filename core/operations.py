@@ -18,18 +18,24 @@ import subprocess
 import psutil
 import copy
 import re
+import datetime
+import string
+import itertools
 
 # Concrete imports
 from pathlib import Path
 from contextlib import contextmanager
 from dataclasses import dataclass
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Union, Any, Optional
 from concurrent.futures import ProcessPoolExecutor, as_completed
 
 # Local imports
 from core.logger import SafeLogger
 from config.parser import load_default_config
 from run_on_platform.base import OperationResult
+from utils.path_validator import SafePathValidator
+from utils.path_utils import check_path_status, strip_common_prefix_sources
+from file_ops import find_matching_batch_files
 
 class SafeRemoteOperations:
     """Safe version of remote operations with proper atomicity and logging"""
@@ -716,7 +722,8 @@ class SafeRemoteOperations:
                         bat_files_list = [os.path.join(base_dir, f) for f in os.listdir(base_dir)
                                           if f.lower().endswith('.bat')]
                         if bat_files_list:
-                            bats_in_dir = find_matching_bat_files(paths[i - 1], 3)
+                            bats_in_dir = find_matching_batch_files(exe_path = paths[i - 1], min_match_length = 3,
+                                                                    batch_rec_pattern=[".bat"])
                             self.safe_logger.warning(f"For persistent app:\n\t{paths[i - 1]}\n"
                                                      f"running it using:\n\t{bats_in_dir[0]}")
                             # os.path.join(base_dir, bats_in_dir[0])

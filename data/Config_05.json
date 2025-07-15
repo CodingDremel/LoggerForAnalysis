@@ -11,6 +11,7 @@
             "save_process_list_path": "C:\\Logs\\.*",
             "kill_all_path": "ABS_PATH_TO_APP_KILLING_ALL_EXEC",
             "log_src_path": "ABS_PATH_TO_READ_LOG_FILES_FROM_THIS_COMPUTER",
+            "log_file_extensions": [".txt", ".log", ".csv", ".sum", ".tmp", ".\\d+"],
             "apps": [
                 "FILENAME_S_OF_EXE_TO_LAUNCH"
             ],
@@ -61,6 +62,7 @@
             "save_process_list_path": "C:\\Logs\\.*",
             "kill_all_path": "ABS_PATH_TO_APP_KILLING_ALL_EXEC",
             "log_src_path": "ABS_PATH_TO_READ_LOG_FILES_FROM_THIS_COMPUTER",
+            "log_file_extensions": [".zip", ".xls[a-zA-Z]{0,1}", ".csv", ".sum", ".tmp", "^Log_.*\\.\\d+"],
             "apps": [
                 "FILENAME_S_OF_EXE_TO_LAUNCH"
             ],
