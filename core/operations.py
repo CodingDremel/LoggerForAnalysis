@@ -11,7 +11,7 @@ import multiprocessing
 import threading
 import time
 import shutil
-import fcntl
+# import fcntl
 import tempfile
 import queue
 import subprocess
@@ -30,12 +30,54 @@ from typing import List, Dict, Union, Any, Optional
 from concurrent.futures import ProcessPoolExecutor, as_completed
 
 # Local imports
+
 from core.logger import SafeLogger
 from config.parser import load_default_config
 from run_on_platform.base import OperationResult
 from utils.path_validator import SafePathValidator
 from utils.path_utils import check_path_status, strip_common_prefix_sources
 from file_ops import find_matching_batch_files
+import utils.memory_and_running_ops
+
+
+def spinner_wrapper(func, *args, **kwargs):
+    """
+    Wrap a function with spinner if it takes more than 2s to complete
+
+    :param func:
+    :param args:
+    :param kwargs:
+    :return:
+    """
+    result = [None]
+    done = threading.Event()
+
+    def spinner():
+        for c in itertools.cycle('|/-\\'):
+            if done.is_set():
+                break
+            print(f'\r\u23F3 Searching...{c}', end='', flush=True)
+            time.sleep(0.1)
+
+    def target():
+        result[0] = func(*args, **kwargs)
+        done.set()
+
+    thread = threading.Thread(target=target)
+    thread.start()
+
+    thread.join(timeout=2)
+    if not done.is_set():
+        spin_thread = threading.Thread(target=spinner)
+        spin_thread.start()
+        thread.join()
+        done.set()
+        spin_thread.join()
+        print("\r\u2705 - Search finished.     ")
+    else:
+        print("\r\u2705 - Search completed in less than 2s")
+    return result[0]
+
 
 class SafeRemoteOperations:
     """Safe version of remote operations with proper atomicity and logging"""
@@ -56,7 +98,7 @@ class SafeRemoteOperations:
         self.max_files_per_operation = config.get('max_files_per_operation', 1000)
         self.backup_before_delete = config.get('backup_before_delete', True)
 
-    def _build_safe_apps_list(self, config: Dict[str, Any], logger: SafeLogger) -> List[str]:
+    def _build_safe_apps_list(self, config: Dict[str, Any]) -> List[str]:
         """Build safe_apps list with fallback to computer-specific apps"""
         # If safe_apps is not explicitly defined in config, use default it
         joined_safe_apps = copy.deepcopy(config['safe_apps'])
@@ -80,7 +122,7 @@ class SafeRemoteOperations:
             f"from computers = {len(combined_apps)} total\n\t" + "\n\t".join(combined_apps) + "\n")
         return combined_apps
 
-    def _build_critical_apps_list(self, config: Dict[str, Any], logger: SafeLogger) -> List[str]:
+    def _build_critical_apps_list(self, config: Dict[str, Any]) -> List[str]:
         """Build critical_apps list with fallback to defaults only"""
         # If critical_apps is explicitly defined in config, use it
         if config['critical_apps'] == load_default_config()['critical_apps']:
@@ -139,17 +181,7 @@ class SafeRemoteOperations:
 
     def _extract_app_name(self, app_path: str) -> str:
         """Extract just the executable name from a full path"""
-        if not app_path:
-            return ""
-
-        # Handle both Windows and Unix paths
-        app_name = os.path.basename(app_path)
-
-        # If it's just a name without path, return as-is
-        if app_name == app_path:
-            return app_name
-
-        return app_name
+        return os.path.basename(app_path or "")
 
     def _is_safe_application(self, app: str) -> bool:
         """Check if application is safe to start"""
@@ -167,7 +199,7 @@ class SafeRemoteOperations:
         #                for critical_app in self.critical_apps)
         return True
 
-    def get_all_files(self, path: str, filter=False) -> List[str]:
+    def get_all_files(self, path: str, filter_by_extension=False) -> List[str]:
         """Safely get all files matching extensions"""
         files = []
         try:
@@ -179,15 +211,13 @@ class SafeRemoteOperations:
             if os.path.isdir(path):
                 for root, _, filenames in os.walk(path):
                     for filename in filenames:
-                        if filter:
-                            if re.search(pattern, filename):
-                                full_path = os.path.join(root, filename)
-                        else:
+                        if not filter_by_extension or re.search(pattern, filename):
                             full_path = os.path.join(root, filename)
 
                         # Safety checks using instance variables
                         if os.path.getsize(full_path) > self.max_file_size:
-                            self.safe_logger.warning(f"Skipping large file: {full_path}")
+                            self.safe_logger.warning(f"Skipping large file: {full_path}, "
+                                                     f"size exceeds max_file_size: {self.max_file_size}")
                             continue
 
                         files.append(full_path)
@@ -457,7 +487,7 @@ class SafeRemoteOperations:
                     continue
 
             # get files filtered or not - depending on supplied param
-            files = self.get_all_files(src, filter=copy_type)
+            files = self.get_all_files(src, filter_by_extension=copy_type)
 
             for file in files:
                 try:
@@ -628,44 +658,6 @@ class SafeRemoteOperations:
                     logger.error(f"\u274C - Following errors found:\n\t{print_error_msg_details}")
                 return []
 
-        def spinner_wrapper(func, *args, **kwargs):
-            """
-            Wrap a function with spinner if it takes more than 2s to complete
-
-            :param func:
-            :param args:
-            :param kwargs:
-            :return:
-            """
-            result = [None]
-            done = threading.Event()
-
-            def spinner():
-                for c in itertools.cycle('|/-\\'):
-                    if done.is_set():
-                        break
-                    print(f'\r\u23F3 Searching...{c}', end='', flush=True)
-                    time.sleep(0.1)
-
-            def target():
-                result[0] = func(*args, **kwargs)
-                done.set()
-
-            thread = threading.Thread(target=target)
-            thread.start()
-
-            thread.join(timeout=2)
-            if not done.is_set():
-                spin_thread = threading.Thread(target=spinner)
-                spin_thread.start()
-                thread.join()
-                done.set()
-                spin_thread.join()
-                print("\r\u2705 - Search finished.     ")
-            else:
-                print("\r\u2705 - Search completed in less than 2s")
-            return result[0]
-
         # apps = ['NotePad++.exe']
         if not all(os.path.isabs(app) for app in apps):
             if search_for_apps:
@@ -752,8 +744,8 @@ class SafeRemoteOperations:
 
         duration = time.time() - start_time
 
-        verification, error_list = verify_apps_running(computer=computer,
-                                                       list_of_keys_to_test=selected_keys, logger=self.safe_logger)
+        verification, error_list = utils.memory_and_running_ops.verify_apps_running(
+            computer=computer, list_of_keys_to_test=selected_keys, verify_apps_running_logger=self.safe_logger)
         if verification:
             self.safe_logger.info(
                 f"[{name}] safe_start_applications completed: {success} succeeded, {fail} failed in {duration:.2f}s")
@@ -926,8 +918,8 @@ class SafeRemoteOperations:
             """Kills windows processes by part of name or name in case-insensitive way"""
             sub = substring.lower()
             for proc in psutil.process_iter(['pid', 'name']):
+                proc_name = proc.info['name']
                 try:
-                    proc_name = proc.info['name']
                     if proc_name and sub in proc_name.lower():
                         logger.info(f"PsUtil Killing: {proc_name} (PID: {proc.pid})")
                         proc.kill()

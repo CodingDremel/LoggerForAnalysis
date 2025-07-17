@@ -1,4 +1,16 @@
-from core.html_report import generate_html_report
+import argparse
+import logging
+import time
+
+from functools import partial
+from concurrent.futures import ProcessPoolExecutor, as_completed
+
+import core.logger
+import core.executor
+import core.validator
+from core.core_html_report import generate_html_report
+from run_on_platform.base import OperationResult
+from core.executor import run_operation_safely
 
 def main():
     parser = argparse.ArgumentParser(
@@ -64,19 +76,19 @@ def main():
     # Setup logging
     log_level = LOG_LEVELS[args.verbosity]
 
-    safe_logger = SafeLogger(log_level=log_level)
+    safe_logger = core.logger.SafeLogger(log_level=log_level)
     shared_log_queue = safe_logger._log_queue
 
     safe_logger.start_log_listener()
 
     # Load and validate configuration using new loader
     try:
-        config = load_config_file(args.config)
+        config = core.executor.load_config_file(args.config)
     except (FileNotFoundError, ValueError) as e:
         print(f"Error loading configuration: {e}")
         return 1
 
-    config_errors = validate_config(config)
+    config_errors = core.validator.validate_config(config)
     if config_errors:
         print("Configuration errors:")
         for error in config_errors:
@@ -148,7 +160,7 @@ def main():
                         )
 
         # Generate report
-        report = generate_report(all_results, args.report)
+        report = core.executor.generate_report(all_results, args.report)
         safe_logger.logger.info(f"Operation completed. Report saved to: {args.report}")
         safe_logger.logger.info(
             f"Summary: {report['summary']['total_successes']} successes, "
@@ -157,7 +169,8 @@ def main():
             # log_folder: path where logs/results are saved
             # report_path: path to operation_report.json
             # log_capture: contents of your log buffer
-    
+            log_capture_buffer = safe_logger.get_captured_logs()
+
             output_html = generate_html_report(
                 # TODO: Change to correct folder name - just read is not enough
                 log_folder=config.get("destination", "logs"),

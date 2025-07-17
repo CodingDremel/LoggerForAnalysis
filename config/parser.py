@@ -13,7 +13,7 @@ def load_default_config():
         'backup_before_delete': True,
         'verify_paths': True,
         'simulation_mode': False,
-        'default_log_file_extensions': ['.txt', '.log', '.csv', '.\d+', '.sum', '.tmp'],
+        'default_log_file_extensions': ['.txt', '.log', '.csv', r'.\d+', '.sum', '.tmp'],
         'safe_apps': [],
         'critical_apps': [],
         'destination': "C:\\Logs"
